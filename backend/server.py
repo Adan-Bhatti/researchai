@@ -15,6 +15,7 @@ from typing import List, Optional
 from datetime import datetime, timezone
 from prompt_generator import generate_prompt
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+import openpyxl
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -37,7 +38,7 @@ class ResearchConfig(BaseModel):
     niches: List[str] = []
     depth: str = "standard"
     output_format: str = "json"
-    dataset_size: int = 10
+    dataset_size: int = Field(default=10, ge=1, le=1000)
     custom_query: Optional[str] = None
 
 
@@ -290,7 +291,6 @@ async def export_research(task_id: str, format: str = Query("json")):
         )
 
     if format == "xlsx":
-        import openpyxl
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Research Results"
